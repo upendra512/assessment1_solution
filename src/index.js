@@ -1,78 +1,73 @@
+
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-const path = require('path');
-const killPort = require('kill-port');
+const { ethers } = require('ethers');
 
-require('dotenv').config();
 
 const app = express();
-const PORT = parseInt(process.env.PORT, 10) || 3001;
+// Use PORT from .env or default to 3001
+const PORT = process.env.PORT || 3001;
 
-const checkPort = async (port, maxPort = 65535) => {
+// --- Middleware ---
+app.use(cors());
+app.use(express.json());
+app.use(morgan('dev'));
 
-    if (port > maxPort) {
-        throw new Error("No available ports found");
-    }
+// --- Smart Contract Configuration ---
+// Grabbing the RPC_URL you provided in the .env
+const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
+if (!process.env.RPC_URL) {
+    console.error("❌ RPC_URL is not defined in the .env file.");
+    process.exit(1);
+}
 
+// Chainlink ETH/USD Price Feed Address
+const contractAddress = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419";
+const abi = [
+    "function latestRoundData() view returns (uint80, int256 answer, uint256, uint256 updatedAt, uint80)"
+];
+
+/**
+ * @route    GET /api/UpendraSinghApiTest
+ * @desc     Assessment Task: Fetch ETH price from Smart Contract
+ * @author   Upendra Singh
+ */
+app.get('/api/UpendraSinghApiTest', async (req, res) => {
     try {
-        await killPort(port, "tcp");
-        await killPort(port, "udp");
-        return port;
-    } catch (err) {
-        return checkPort(port + 1, maxPort);
-    }
-};
+        const contract = new ethers.Contract(contractAddress, abi, provider);
+        const data = await contract.latestRoundData();
+        
+        const ethPrice = Number(data.answer) / 10**8;
+        const lastUpdated = new Date(Number(data.updatedAt) * 1000).toLocaleString();
 
-(async () => {
-    const safePort = await checkPort(PORT);
-    const getPort = (await import('get-port')).default; // dynamic import
-    const final_port = await getPort({ port: safePort });
+        // TASK REQUIREMENT: Print to console
+        console.log("\n--- Assessment Output ---");
+        console.log(`Contract: ${contractAddress}`);
+        console.log(`Fetched ETH Price: $${ethPrice.toFixed(2)}`);
+        console.log(`Timestamp: ${lastUpdated}`);
+        console.log("-------------------------\n");
 
-    console.log(`Port ${final_port} is free. Ready to start server.`);
-
-    // Middleware
-    app.use(cors({ origin: `http://localhost:${final_port}` }));
-    app.use(express.json());
-    app.use(morgan('dev'));
-
-    // Routes
-    app.use('/api/items', require('./routes/items'));
-    app.use('/api/stats', require('./routes/stats'));
-
-    require('./config/dbHandler.js').connect();
-
-    /**
-     * @route    [HTTP_METHOD] /api/endpoint
-     * @desc     [Short summary of what this endpoint does, e.g., Reads or sets value in smart contract]
-     * @author   [Your Name]
-     * @access   [public/private/auth-required]
-     * @param    {Request}  req  - Express request object. [Describe relevant body/query/params fields]
-     * @param    {Response} res  - Express response object.
-     * @returns  {JSON}          [Describe the JSON structure returned]
-     * @throws   [Error conditions, e.g., 400 on invalid input, 500 on contract failure]
-     *
-     * @example
-     * // Example request
-     * curl -X POST http://localhost:3001/contract/value -H "Content-Type: application/json" -d '{"value": 42}'
-     *
-     * // Example response
-     * {
-     *   "message": "Value updated",
-     *   "txHash": "0x..."
-     * }
-     */
-
-    // Serve static files in production
-    if (process.env.NODE_ENV === 'production') {
-        app.use(express.static('client/build'));
-        app.get('*', (req, res) => {
-            res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+        res.json({
+            success: true,
+            endpoint: "UpendraSinghApiTest",
+            blockchainData: {
+                asset: "ETH/USD",
+                price: ethPrice.toFixed(2),
+                updatedAt: lastUpdated
+            }
         });
-    }
-
-    // Start server
-    app.listen(final_port, () => {
-        console.log(`Backend running on http://localhost:${final_port}`);
+  } catch (error) {
+    console.error("❌ Full Error:", error); // This shows the detail in your terminal
+    res.status(500).json({ 
+        success: false, 
+        error: error.message || "An unknown blockchain error occurred" // This shows it in the browser
     });
-})();
+}
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Run your test at: http://localhost:${PORT}/api/UpendraSinghApiTest`);
+});
