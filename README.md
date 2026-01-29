@@ -86,7 +86,9 @@ git commit -m "Fix: use ethers.JsonRpcProvider instead of constructor instantiat
 ## 📸 Screenshots 
 
 ### API Response
-![API Response Screenshot](<Screenshot 2026-01-30 000938.png>)
+(<img width="441" height="162" alt="Screenshot 2026-01-30 000958" src="https://github.com/user-attachments/assets/46b411d9-0dcf-451f-b9b6-0c7948f9b761" />
+)
 
 ### Console Output
-![Console Output Screenshot](<Screenshot 2026-01-30 000958.png>)
+(<img width="1251" height="436" alt="Screenshot 2026-01-30 000938" src="https://github.com/user-attachments/assets/534ca8e2-46fe-433a-b59a-94f2f6ec128a" />
+)
