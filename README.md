@@ -1,27 +1,92 @@
-# Blockchain Data Integration API – Skill Test
+# Blockchain Data Integration API
 
 ## 📝 Project Overview
-This project demonstrates the integration of Ethereum blockchain data into a Node.js/Express backend. It was developed as a technical assessment to showcase proficiency in Web3 technologies, smart contract interaction, and API development.
+This project demonstrates a robust integration between a Node.js/Express backend and the Ethereum blockchain. Developed as a technical assessment test, it showcases proficiency in Web3 architecture, smart contract interaction via Ethers.js, and professional API development standards.
 
-The system connects to the **Ethereum Mainnet** and fetches real-time financial data from the **Chainlink Decentralized Oracle Network**.
+The system acts as a bridge to the **Ethereum Mainnet**, fetching high-fidelity financial data directly from the **Chainlink Decentralized Oracle Network**.
+
+---
+
+## 🔄 Architecture & Data Flow
+The API follows a standardized Web3 request cycle:
+1. **Request**: Client queries the `/api/UpendraSinghApiTest` endpoint.
+2. **Provider**: The server connects to the Ethereum Mainnet via **Infura** using a JSON-RPC provider.
+3. **Smart Contract**: The system interacts with the **Chainlink ETH/USD Aggregator** (`0x5f4e...`).
+4. **Processing**: Data is retrieved as a BigInt, normalized using the contract's `decimals()` value, and formatted for human readability.
+5. **Response**: A structured JSON payload is returned to the client.
+
+
+
+---
 
 ## 🚀 Features
-* **Live Smart Contract Interaction**: Connects to the Chainlink ETH/USD Price Feed.
-* **RESTful API Architecture**: Exposes blockchain data via a clean, structured JSON endpoint.
-* **Security**: Implements environment variable management for sensitive RPC credentials.
-* **Resiliency**: Robust port-checking logic to prevent startup conflicts.
+* **Real-time Oracle Queries**: Live data fetching from on-chain price feeds.
+* **Ethers.js v6 Implementation**: Leveraging the latest version for improved type safety.
+* **Security-First Configuration**: Strict use of `.env` for infrastructure credentials.
+* **Operational Resiliency**: Built-in port-management logic to ensure server stability.
 
 ## 🛠️ Tech Stack
-* **Backend**: Node.js, Express.js
-* **Blockchain Library**: Ethers.js (v6)
-* **Infrastructure**: Infura (RPC Provider)
-* **Tools**: Dotenv (Config), Morgan (Logging), CORS
+* **Runtime**: Node.js
+* **Framework**: Express.js
+* **Blockchain**: Ethers.js (v6)
+* **Infrastructure**: Infura (Mainnet RPC)
+* **Utilities**: Morgan (Logging), CORS, Dotenv
 
 ---
 
 ## ⚙️ Setup & Installation
 
-1. **Clone the repository**:
-   ```bash
-   git clone [your-repo-link]
-   cd assessment1
+### 1. Clone the repository
+```bash
+git clone https://github.com/upendra512/assessment1_solution.git
+cd assessment1
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+Create a `.env` file in the root directory:
+```env
+PORT=3001
+RPC_URL=https://mainnet.infura.io/v3/your-infura-key
+```
+
+### 4. Run the application
+```bash
+cd src
+node index.js
+```
+The server will start on `http://localhost:3001`
+
+### 5. Test the API
+```bash
+curl http://localhost:3001/api/UpendraSinghApiTest
+```
+Or visit the URL in your browser to see the live ETH/USD price data
+
+---
+
+## 📦 Git Workflow
+
+Development commits made:
+```bash
+# Navigate to source directory
+cd assessment1/src
+
+# Stage and commit changes
+git add index.js
+git commit -m "Fix: use ethers.JsonRpcProvider instead of constructor instantiation"
+```
+
+---
+
+## 📸 Screenshots 
+
+### API Response
+![API Response Screenshot](<Screenshot 2026-01-30 000938.png>)
+
+### Console Output
+![Console Output Screenshot](<Screenshot 2026-01-30 000958.png>)
