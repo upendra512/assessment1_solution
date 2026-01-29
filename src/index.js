@@ -18,10 +18,7 @@ app.use(morgan('dev'));
 // --- Smart Contract Configuration ---
 // Grabbing the RPC_URL you provided in the .en
 const provider = new ethers.JsonRpcProvider("https://mainnet.infura.io/v3/cb27095411b243ceb2618679851620a3");
-// if (!process.env.RPC_URL) {
-//     console.error("❌ RPC_URL is not defined in the .env file.");
-//     process.exit(1);
-// }
+
 
 // Chainlink ETH/USD Price Feed Address
 const contractAddress = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419";
